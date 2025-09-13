@@ -1,0 +1,11 @@
+django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+channels
+channels-redis
+celery[redis]
+redis
+mysqlclient
+python-dotenv
+weasyprint
