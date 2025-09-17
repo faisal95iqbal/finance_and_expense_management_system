@@ -1,0 +1,19 @@
+<!-- templates/emails/invite_email.html -->
+<!doctype html>
+<html>
+
+<body style="font-family: sans-serif; line-height:1.6;">
+    <h2>{{ site_name }} — Invitation</h2>
+    <p>Hi {{ user.email }},</p>
+    <p>You have been invited to join <strong>{{ site_name }}</strong>. Click the button below to set your password and
+        activate your account. This link expires in 48 hours.</p>
+    <p><a href="{{ invite_link }}"
+            style="display:inline-block;padding:10px 16px;background:#0d6efd;color:white;border-radius:6px;text-decoration:none;">Set
+            password</a></p>
+    <p>If you can't click the button, copy-paste this URL into your browser:</p>
+    <p>{{ invite_link }}</p>
+    <hr />
+    <p>Thanks,<br />The {{ site_name }} Team</p>
+</body>
+
+</html>

@@ -1,0 +1,4 @@
+<!-- templates/emails/invite_email.txt -->
+You have been invited to join {{ site_name }}.
+Set your password here: {{ invite_link }}
+This link expires in 48 hours.

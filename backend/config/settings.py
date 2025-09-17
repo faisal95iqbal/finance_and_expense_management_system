@@ -31,13 +31,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
     "channels",
+    "django_filters",
 
     "users",
+    "businesses",
     "notifications",
     "finance",
     "invoices",
@@ -57,6 +58,20 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
+AUTH_USER_MODEL = "users.User"
+
+# Password reset token expiry: 48 hours
+PASSWORD_RESET_TIMEOUT = 48 * 3600  # seconds
+
+# Email backend (file backend for development)
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = BASE_DIR / "sent_emails"  # ensure folder exists or Django will create it
+DEFAULT_FROM_EMAIL = "noreply@example.com"
+SITE_NAME = "FinanceApp"
+FRONTEND_URL = "http://localhost:5173"
+
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -71,6 +86,9 @@ TEMPLATES = [
         },
     },
 ]
+
+# Add templates dir if not present
+TEMPLATES[0]["DIRS"].append(BASE_DIR / "templates")
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -164,15 +182,12 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Email (basic)
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = True
-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # default Vite port
     "http://localhost:3000",
+]
+
+AUTHENTICATION_BACKENDS = [
+    "users.backends.EmailBackend",      # ✅ custom backend
+    "django.contrib.auth.backends.ModelBackend",  # fallback
 ]

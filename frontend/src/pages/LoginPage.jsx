@@ -1,43 +1,54 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Form, Button, Container, Alert } from "react-bootstrap";
 import { AuthContext } from "../contexts/AuthContext";
 
-export default function LoginPage() {
+const LoginPage = () => {
     const { login } = useContext(AuthContext);
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState(null);
-    const nav = useNavigate();
+    const [error, setError] = useState("");
 
-    const submit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            await login(username, password);
-            nav("/dashboard");
-        } catch (err) {
-            setError("Invalid credentials");
+        const success = await login(email, password);
+        if (!success) {
+            setError("Invalid email or password");
+        } else {
+            window.location.href = "/dashboard"; // redirect after login
         }
     };
 
     return (
-        <div className="container mt-5">
-            <div className="row justify-content-center">
-                <div className="col-md-4">
-                    <h3 className="mb-3">Sign In</h3>
-                    <form onSubmit={submit}>
-                        <div className="mb-3">
-                            <label className="form-label">Username</label>
-                            <input className="form-control" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Password</label>
-                            <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                        </div>
-                        {error && <div className="alert alert-danger">{error}</div>}
-                        <button className="btn btn-primary w-100">Login</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <Container style={{ maxWidth: "400px", marginTop: "50px" }}>
+            <h3>Login</h3>
+            {error && <Alert variant="danger">{error}</Alert>}
+            <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="formEmail" className="mb-3">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formPassword" className="mb-3">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </Form.Group>
+
+                <Button variant="primary" type="submit" className="w-100">
+                    Login
+                </Button>
+            </Form>
+        </Container>
     );
-}
+};
+
+export default LoginPage;
