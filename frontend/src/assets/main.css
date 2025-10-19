@@ -1,0 +1,154 @@
+.sidebar-container {
+    min-height: calc(100vh - 97px);
+    background-color: #c8cbeb !important;
+    transition: transform 0.35s ease-in-out, box-shadow 0.35s ease-in-out;
+}
+
+.content-container {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 97px);
+}
+
+.sidebar .nav-link {
+    color: #fff !important;
+    font-weight: 400;
+    padding: 5px 8px;
+    margin: 5px 0px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Active link highlight */
+.sidebar .nav-link.active {
+    background-color: #fff;
+    color: #5161ce !important;
+    border-radius: 10px;
+    font-weight: 500;
+    margin: 0px;
+    padding: 5px 8px;
+}
+
+/* Hover effect */
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+    border-radius: 10px;
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2;
+}
+
+/* Hide sidebar on mobile by default */
+@media (max-width: 767px) {
+    .sidebar-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 260px;
+        height: 100vh;
+        transform: translateX(-100%);
+        z-index: 1031;
+        background: rgba(81, 97, 206, 0.8);
+        /* semi-transparent for glass look */
+        backdrop-filter: blur(14px);
+        /* adds the blur effect */
+        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.3);
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .sidebar-container.open {
+        transform: translateX(0);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(5px);
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 1030;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .sidebar-toggle-btn {
+        border: none;
+        background: none;
+        font-size: 1.4rem;
+        box-shadow: none;
+    }
+
+    .content-container {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+/* Sidebar Links */
+.sidebar .nav-link {
+    padding: 12px 15px;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    transition: all 0.25s ease-in-out;
+}
+
+/* Remove spacing on sides */
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background-color: #fff;
+    color: #5161ce !important;
+}
+
+/* Hover effect */
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(2px);
+}
+
+/* Active state */
+.sidebar .nav-link.active {
+    background-color: #fff;
+    color: #5161ce !important;
+    font-weight: 500;
+}
+
+/* Footer sticks to the bottom of the viewport */
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Make sure main content grows to push footer down */
+main {
+    flex: 1;
+}
+
+/* Footer styling */
+.app-footer {
+    background-color: #5161ce;
+    /* Same as header/navbar */
+    color: #fff;
+    width: 100%;
+    margin-top: auto;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}

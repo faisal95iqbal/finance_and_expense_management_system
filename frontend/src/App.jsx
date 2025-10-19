@@ -5,9 +5,15 @@ import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import AdminBusinesses from "./pages/AdminBusinesses";
 import BusinessSettings from "./pages/BusinessSettings";
+import ExpenseList from "./pages/expense/ExpenseList";
+import IncomeList from "./pages/income/IncomeList";
+import ExpenseForm from "./pages/expense/ExpenseForm";
+import IncomeForm from "./pages/income/IncomeForm";
 import SetPassword from "./pages/SetPassword";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import ChatRoom from "./pages/ChatRoom";
+import ActivityFeed from "./pages/ActivityFeed";
+import Home from "./pages/Home";
+import Layout from "./components/Layout";
 
 function Protected({ children, allowedRoles }) {
   const { user } = React.useContext(AuthContext);
@@ -29,8 +35,10 @@ function PublicOnly({ children }) {
 export default function App() {
   return (
     <AuthProvider>
-      <Header />
+
       <Routes>
+        <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
         {/* Public routes */}
         <Route
           path="/login"
@@ -66,16 +74,24 @@ export default function App() {
         <Route
           path="/owner/users"
           element={
-            <Protected allowedRoles={["owner"]}>
+            <Protected allowedRoles={["owner", "manager"]}>
               <BusinessSettings />
             </Protected>
           }
         />
+        <Route path="/expenses" element={<Protected allowedRoles={["owner", "manager", "accountant"]}><ExpenseList /></Protected>} />
+        <Route path="/expenses/new" element={<Protected allowedRoles={["owner", "manager", "accountant"]}><ExpenseForm /></Protected>} />
+        <Route path="/incomes" element={<Protected allowedRoles={["owner", "manager", "accountant"]}><IncomeList /></Protected>} />
+        <Route path="/incomes/new" element={<Protected allowedRoles={["owner", "manager", "accountant"]}><IncomeForm /></Protected>} />
+
+        <Route path="/chatroom" element={<Protected allowedRoles={["owner", "manager", "accountant", "staff"]}><ChatRoom /></Protected>} />
+        <Route path="/activityfeed" element={<Protected allowedRoles={["owner", "manager", "accountant", "staff"]}><ActivityFeed /></Protected>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Route>
       </Routes>
-      <Footer />
+
     </AuthProvider>
   );
 }

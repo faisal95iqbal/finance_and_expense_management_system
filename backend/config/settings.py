@@ -115,7 +115,7 @@ ASGI_APPLICATION = "config.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [os.getenv("REDIS_URL")]},
+        "CONFIG": {"hosts": [("172.21.22.103", 6379)]},
     }
 }
 
@@ -130,6 +130,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "PAGE_SIZE": 10,
 }
 
 SIMPLE_JWT = {

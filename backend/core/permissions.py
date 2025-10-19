@@ -71,17 +71,31 @@ class IsSuperUserOnly(BasePermission):
         return bool(request.user and request.user.is_authenticated and request.user.is_superuser)
 
 
+from rest_framework.permissions import BasePermission, SAFE_METHODS
+
 class CanManageBusinessUsers(BasePermission):
     """
-    Owner: can create all roles.
-    Manager: can only create staff/accountant.
+    - Owner: full access
+    - Manager: can view all users, can create staff/accountant
+    - Staff/Accountant: no access
     """
     def has_permission(self, request, view):
         user = request.user
         if not (user and user.is_authenticated and user.business):
             return False
 
-        if request.method in SAFE_METHODS:
+        # Owner has full access
+        if user.role == "owner":
             return True
 
-        return user.role in ("owner", "manager")
+        # Manager: allow read-only + create
+        if user.role == "manager":
+            if request.method in SAFE_METHODS:
+                return True
+            if request.method == "POST":
+                return True  # actual role check happens in perform_create
+            return False
+
+        # Staff/accountant: no access
+        return False
+

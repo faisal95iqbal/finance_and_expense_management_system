@@ -1,59 +1,108 @@
-import { useState,useContext } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink, useLocation } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
+import NotificationsBell from "./NotificationsBell";
+import "./header.css";
+
+
+const loggedInMenuItems = [
+  { to: "/", icon: "fas fa-home", label: "Home" },
+  { to: "/dashboard", icon: "fas fa-tachometer-alt", label: "Dashboard" },
+  { label: "Logout", icon: "fa-solid fa-arrow-right-from-bracket", action: "logout" },
+];
+const generalMenuItems = [
+  { to: "/", icon: "fas fa-home", label: "Home" },
+  { to: "/login", icon: "fa-solid fa-arrow-right-from-bracket", label: "Login" },
+];
 
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
   const token = localStorage.getItem("token");
+
+  const menuItems = token ? loggedInMenuItems : generalMenuItems;
+
+  const location = useLocation();
   const [expanded, setExpanded] = useState(false);
+  const [selectorStyle, setSelectorStyle] = useState({});
+
+  const navRef = useRef(null);
+  // Adjust selector position when route changes or window resizes
+  useEffect(() => {
+    const updateSelector = () => {
+      if (!navRef.current) return;
+      const activeLink = navRef.current.querySelector(".nav-link.active");
+      if (activeLink) {
+        const { offsetTop, offsetLeft, offsetHeight, offsetWidth } = activeLink;
+        setSelectorStyle({
+          top: offsetTop + "px",
+          left: offsetLeft + "px",
+          height: offsetHeight + "px",
+          width: offsetWidth + "px",
+        });
+      }else{
+        setSelectorStyle({ display: "none" });
+      }
+    };
+    updateSelector();
+    window.addEventListener("resize", updateSelector);
+    return () => window.removeEventListener("resize", updateSelector);
+  }, [location.pathname]);
+  // Close menu on mobile after clicking a link
+  const handleNavClick = () => {
+    setExpanded(false);
+  };
 
   return (
-    <Navbar expand="lg" expanded={expanded} onToggle={(val) => setExpanded(val)} className="shadow-sm">
-      <Container>
-        <Navbar.Brand as={Link} to="/" className="fw-bold">
-          <h3 className="mb-0">Business Management Portal</h3>
-        </Navbar.Brand>
-        {user && token && (
-          <div className="d-none d-lg-flex align-items-center ms-3 me-auto">
-            <Link onClick={() => setExpanded(false)}>
-              <span className="text-muted">Welcome,&nbsp;</span>
-              <strong className="text-dark">{user.email}</strong>
-            </Link>
-          </div>
-        )}
-        <Navbar.Toggle aria-controls="main-navbar" />
-        <Navbar.Collapse id="main-navbar" className="justify-content-end">
-          <Nav>
-            {!token ? (
-              <>
-                <Nav.Link as={Link} to="/login" onClick={() => setExpanded(false)}>
-                  <Button variant="outline-light" className="me-1">
-                    Login
-                  </Button>
-                </Nav.Link>
-              </>
-            ) : (
-              <>
-                
-                <Nav.Link as={Link} to="/dashboard" onClick={() => setExpanded(false)}>
-                  <Button variant="success" className="me-1">
-                    Dashboard
-                  </Button>
-                </Nav.Link>
-                  <Nav.Link onClick={() => {setExpanded(false); }}>
-                  <Button variant="danger" onClick={logout}>
-                    Logout
-                  </Button>
-                </Nav.Link>
 
-              </>
-            )}
+    <Navbar
+      expand="lg"
+      className="navbar-mainbg"
+      variant="dark"
+      expanded={expanded}
+      onToggle={setExpanded}
+    >
+      <Container>
+        <Navbar.Brand as={NavLink} to="/" className="navbar-logo">
+          Business Management Portal
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbarScroll" />
+        <Navbar.Collapse id="navbarScroll">
+          <Nav className="ms-auto position-relative" ref={navRef}>
+            <div className="hori-selector" style={selectorStyle}>
+              <div className="left"></div>
+              <div className="right"></div>
+            </div>
+            {menuItems.map((item) => (
+              item.action === "logout" ? (
+                <Nav.Link
+                  key={item.label}
+                  as="span"
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={logout}
+                >
+                  <i className={item.icon}></i> {item.label}
+                </Nav.Link>
+              ) : (
+                <Nav.Link
+                  as={NavLink}
+                  key={item.to}
+                  to={item.to}
+                  onClick={handleNavClick}
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active" : "nav-link"
+                  }
+                >
+                  <i className={item.icon}></i> {item.label}
+                </Nav.Link>)
+            ))}
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
+
   );
 };
 

@@ -1,17 +1,22 @@
-// src/pages/Dashboard.js
-import { useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { LineChart, Line, PieChart, Pie } from "recharts";
+import useWebSocket from "../hooks/useWebSocket";
 
-export default function Dashboard() {
-    const { user, logout } = useContext(AuthContext);
+function Dashboard() {
+    const [data, setData] = useState({});
+    const { lastMessage } = useWebSocket("/ws/reports/");
+
+    useEffect(() => {
+        if (lastMessage?.type === "UPDATE_REPORTS") {
+            setData(lastMessage.data); // recalc backend dataset
+        }
+    }, [lastMessage]);
 
     return (
-        <div style={{ padding: 20 }}>
-            <h1>Dashboard</h1>
-            <p>Welcome — your role: <strong>{user?.role}</strong></p>
-            <p> Email: {user?.email}</p>
-            <p>Business ID: <strong>{user?.business_id ?? "N/A"}</strong></p>
-            <button onClick={logout}>Logout</button>
-        </div>
+        <LineChart data={data.expensesOverTime} animationDuration={500}>
+            <Line type="monotone" dataKey="amount" stroke="#007bff" />
+        </LineChart>
     );
 }
+
+export default Dashboard;

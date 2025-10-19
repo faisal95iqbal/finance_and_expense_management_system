@@ -95,7 +95,7 @@ class BusinessUserViewSet(BusinessQuerysetMixin, viewsets.ModelViewSet):
         )
 
     @action(detail=True, methods=["post"], permission_classes=[CanManageBusinessUsers])
-    def resend_invite(self, request, pk=None):
+    def resend_invite(self, request,business_pk = None, pk=None):
         user = self.get_object()
         if not user.is_active:
             self.send_invitation(user)

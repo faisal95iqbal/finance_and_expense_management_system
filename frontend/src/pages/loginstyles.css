@@ -1,0 +1,46 @@
+/* Center the login card vertically and horizontally */
+.login-wrapper {
+    min-height: 80vh;
+    background: #f8f9fa
+}
+
+/* Card styling */
+.login-card {
+    background: linear-gradient(135deg, #b7bbe4, #8f94b1);
+    border-radius: 15px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 25px rgba(139, 57, 57, 0.25);
+}
+
+/* Button */
+.login-btn {
+    background-color: #fff !important;
+    color: #5161ce !important;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #eedede !important;
+    transform: translateY(-1px);
+}
+
+/* Inputs */
+.form-control:focus {
+    border-color: #5161ce;
+    box-shadow: 0 0 0 0.2rem rgba(81, 97, 206, 0.25);
+}
+
+/* Input icons */
+.input-group-text {
+    border: none;
+    color: #5161ce;
+    font-size: 1rem;
+}
+
+/* Responsive card adjustments */
+@media (max-width: 576px) {
+    .login-card {
+        padding: 1.5rem !important;
+    }
+}

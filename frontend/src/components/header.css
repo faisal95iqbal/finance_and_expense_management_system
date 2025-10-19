@@ -1,0 +1,170 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+
+body {
+    font-family: "Roboto", sans-serif;
+}
+
+.navbar-mainbg {
+    background-color: #5161ce;
+    padding: 0;
+}
+
+.navbar-logo {
+    color: #fff;
+    font-weight: 500;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+/* --- Nav Links --- */
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 15px;
+    position: relative;
+    padding: 12px 18px !important;
+    transition: all 0.3s ease;
+    z-index: 2;
+    font-weight: 400;
+}
+
+.navbar-nav {
+    height: 60px;
+    /* match your navbar height */
+    display: flex;
+    align-items: stretch;
+}
+
+.navbar-mainbg {
+    background-color: #5161ce;
+    height: 60px;
+    padding: 0;
+}
+
+.nav-link i {
+    margin-right: 8px;
+}
+
+/* Hover effect */
+.nav-link:hover {
+    color: #ffffff !important;
+    transform: translateY(-2px);
+}
+
+/* Active link (only text color change; background handled by .hori-selector) */
+.nav-link.active {
+    color: #5161ce !important;
+    font-weight: 500;
+}
+
+/* --- Hori Selector --- */
+.hori-selector {
+    position: absolute;
+    background-color: #fff;
+    border-radius: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    top: 0px;
+    bottom: 0px;
+    transition: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1;
+}
+
+.hori-selector .right,
+.hori-selector .left {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background-color: #fff;
+    bottom: 0px;
+}
+
+.hori-selector .right {
+    right: -22px;
+}
+
+.hori-selector .left {
+    left: -22px;
+}
+
+.hori-selector .right:before,
+.hori-selector .left:before {
+    content: "";
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #5161ce;
+}
+
+.hori-selector .right:before {
+    bottom: 0;
+    right: -22px;
+}
+
+.hori-selector .left:before {
+    bottom: 0;
+    left: -22px;
+}
+
+
+.navbar-mainbg .container,
+.navbar-mainbg .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 991px) {
+
+    /* Let navbar grow naturally on mobile */
+    .navbar-mainbg {
+        height: auto !important;
+        padding: 0;
+    }
+
+    .navbar-mainbg .container,
+    .navbar-mainbg .navbar-collapse,
+    .navbar-nav {
+        height: auto !important;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    /* Each menu item full width, left-aligned, clean spacing */
+    .nav-link {
+        padding: 10px 20px !important;
+        width: 100%;
+        justify-content: flex-start;
+        align-items: center;
+        height: auto;
+    }
+
+
+    /* Active menu link visible when collapsed */
+    .nav-link.active {
+        background-color: #fff !important;
+        color: #5161ce !important;
+        border-radius: 6px;
+    }
+
+    /* Hover effect on mobile too */
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #fff !important;
+    }
+
+    .hori-selector {
+        display: none !important;
+    }
+
+    .navbar-collapse.collapsing,
+    .navbar-collapse.show {
+        transition: height 0.2s ease-in-out;
+    }
+}

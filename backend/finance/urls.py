@@ -1,9 +1,9 @@
-# finance/urls.py
 from rest_framework.routers import DefaultRouter
-from .views import ExpenseViewSet, IncomeViewSet
+from .views import ExpenseViewSet, IncomeViewSet, CategoryViewSet
 
 router = DefaultRouter()
-router.register("expenses", ExpenseViewSet, basename="expense")
-router.register("incomes", IncomeViewSet, basename="income")
+router.register(r"categories", CategoryViewSet, basename="categories")
+router.register(r"expenses", ExpenseViewSet, basename="expenses")
+router.register(r"incomes", IncomeViewSet, basename="incomes")
 
 urlpatterns = router.urls
