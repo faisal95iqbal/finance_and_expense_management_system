@@ -72,7 +72,7 @@ export default function App() {
 
         {/* Business owner-only routes */}
         <Route
-          path="/owner/users"
+          path="/business/users"
           element={
             <Protected allowedRoles={["owner", "manager"]}>
               <BusinessSettings />

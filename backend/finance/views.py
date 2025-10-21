@@ -38,6 +38,16 @@ class ExpenseViewSet(TenantQuerysetMixin, viewsets.ModelViewSet):
             serializer.save()
         else:
             serializer.save(business=user.business, created_by=user)
+    def perform_update(self, serializer):
+        user = self.request.user
+        serializer.save(updated_by=user)
+    def perform_destroy(self, instance):
+        """
+        Soft delete or remove expense with deleted_by tracking.
+        """
+        instance.deleted_by = self.request.user
+        instance.save()
+        instance.delete()
 
 
 class IncomeViewSet(TenantQuerysetMixin, viewsets.ModelViewSet):
@@ -56,3 +66,13 @@ class IncomeViewSet(TenantQuerysetMixin, viewsets.ModelViewSet):
             serializer.save()
         else:
             serializer.save(business=user.business, created_by=user)
+    def perform_update(self, serializer):
+        user = self.request.user
+        serializer.save(updated_by=user)
+    def perform_destroy(self, instance):
+        """
+        Soft delete or remove income with deleted_by tracking.
+        """
+        instance.deleted_by = self.request.user
+        instance.save()
+        instance.delete()

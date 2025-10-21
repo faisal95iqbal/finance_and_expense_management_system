@@ -74,6 +74,7 @@ const Header = () => {
               <div className="left"></div>
               <div className="right"></div>
             </div>
+            <NotificationsBell />
             {menuItems.map((item) => (
               item.action === "logout" ? (
                 <Nav.Link

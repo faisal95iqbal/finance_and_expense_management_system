@@ -3,9 +3,24 @@ from .models import Notification, Activity
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
+from decimal import Decimal
+import json
 
 User = get_user_model()
 channel_layer = get_channel_layer()
+
+
+def _serialize_for_json(data):
+    """Recursively convert Decimals and other non-serializable types."""
+    if isinstance(data, Decimal):
+        return float(data)
+    elif isinstance(data, dict):
+        return {k: _serialize_for_json(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [_serialize_for_json(v) for v in data]
+    else:
+        return data
+
 
 def send_business_notification(business, verb, notification_type="announcement", data=None, recipient=None):
     """
@@ -30,18 +45,25 @@ def send_business_notification(business, verb, notification_type="announcement",
         "created_at": n.created_at.isoformat(),
     }
 
-    # if recipient -> send to user_x group; else -> broadcast to business group
+    # Send notification event
     if recipient:
         async_to_sync(channel_layer.group_send)(
-            f"user_{recipient.id}_notifications", {"type": "notification_new", "notification": payload}
+            f"user_{recipient.id}_notifications",
+            {"type": "notification_new", "notification": payload},
         )
     else:
         async_to_sync(channel_layer.group_send)(
-            f"business_{business.id}_notifications", {"type": "notification_new", "notification": payload}
+            f"business_{business.id}_notifications",
+            {"type": "notification_new", "notification": payload},
         )
     return n
 
+
 def log_activity(business, actor, action_type, model_name="", object_id="", before=None, after=None):
+    """Store DB activity + broadcast websocket event."""
+    before = _serialize_for_json(before)
+    after = _serialize_for_json(after)
+
     a = Activity.objects.create(
         business=business,
         actor=actor,
@@ -51,10 +73,15 @@ def log_activity(business, actor, action_type, model_name="", object_id="", befo
         before=before,
         after=after,
     )
+
     payload = {
         "id": a.id,
         "business": a.business_id,
-        "actor": {"id": actor.id, "email": getattr(actor, "email", None), "role": getattr(actor, "role", None)} if actor else None,
+        "actor": {
+            "id": actor.id if actor else None,
+            "email": getattr(actor, "email", None),
+            "role": getattr(actor, "role", None),
+        },
         "action_type": a.action_type,
         "model_name": a.model_name,
         "object_id": a.object_id,
@@ -62,6 +89,7 @@ def log_activity(business, actor, action_type, model_name="", object_id="", befo
         "after": a.after,
         "timestamp": a.timestamp.isoformat(),
     }
+
     async_to_sync(channel_layer.group_send)(
         f"business_{business.id}_activity",
         {"type": "activity_new", "activity": payload},

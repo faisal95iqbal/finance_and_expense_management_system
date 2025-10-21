@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     "users",
     "businesses",
     "notifications",
-    "finance",
+    
     "invoices",
     "audit",
+    "finance.apps.FinanceConfig",
 ]
 
 MIDDLEWARE = [

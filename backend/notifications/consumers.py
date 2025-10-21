@@ -10,6 +10,8 @@ from asgiref.sync import sync_to_async
 from .models import Notification, Activity, ChatMessage
 from .serializers import NotificationSerializer, ActivitySerializer, ChatMessageSerializer
 from django.utils import timezone
+from asgiref.sync import sync_to_async
+from core.presence import mark_user_online, mark_user_offline
 
 User = get_user_model()
 
@@ -135,11 +137,13 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         self.group_name = f"business_{self.business_id}_chat"
         await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await sync_to_async(mark_user_online)(self.user.id, int(self.business_id))
 
         # mark user present (presence keys can be set here; optional)
         await self.accept()
 
     async def disconnect(self, code):
+        await sync_to_async(mark_user_offline)(self.user.id, int(self.business_id))
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive_json(self, content, **kwargs):

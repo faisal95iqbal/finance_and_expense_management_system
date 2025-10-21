@@ -31,6 +31,13 @@ const Sidebar = ({ onLinkClick, onClose }) => {
                 >
                     <i className="fas fa-tachometer-alt me-2"></i> Dashboard
                 </NavLink>
+                <NavLink
+                    to="/business/users"
+                    className="nav-link text-white"
+                    onClick={onLinkClick}
+                >
+                    <i className="fas fa-tachometer-alt me-2"></i> Business Settings
+                </NavLink>
                 
                 <NavLink
                     to="/expenses"
@@ -45,6 +52,20 @@ const Sidebar = ({ onLinkClick, onClose }) => {
                     onClick={onLinkClick}
                 >
                     <i className="fas fa-cog me-2"></i> Incomes
+                </NavLink>
+                <NavLink
+                    to="/chatroom"
+                    className="nav-link text-white"
+                    onClick={onLinkClick}
+                >
+                    <i className="fas fa-cog me-2"></i> Chat Room
+                </NavLink>
+                <NavLink
+                    to="/activityfeed"
+                    className="nav-link text-white"
+                    onClick={onLinkClick}
+                >
+                    <i className="fas fa-cog me-2"></i> Activity Feed
                 </NavLink>
             </Nav>
         </div>

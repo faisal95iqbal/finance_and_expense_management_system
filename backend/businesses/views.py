@@ -14,6 +14,8 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from notifications.utils import send_business_notification
+from core.activity_logger import log_activity
 
 
 from core.mixins import BusinessQuerysetMixin
@@ -79,6 +81,22 @@ class BusinessUserViewSet(BusinessQuerysetMixin, viewsets.ModelViewSet):
         business = get_object_or_404(Business, pk=self.kwargs["business_pk"])
         user = serializer.save(business=business, is_active=False)
         self.send_invitation(user)
+        send_business_notification(
+            business=creator.business,
+            verb=f"{creator.email} invited {user.email} as {user.role}",
+            notification_type="user_invited",
+            data={"user_id": user.pk},
+            recipient=None,  # broadcast to business
+        )
+        log_activity(
+            business=creator.business,
+            actor=creator,
+            action_type="invite",
+            model_name="User",
+            object_id=user.pk,
+            before=None,
+            after={"email": user.email, "role": user.role}
+        )
 
     def send_invitation(self, user):
         """Send email invitation with 48h expiry."""
