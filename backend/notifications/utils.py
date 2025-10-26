@@ -3,12 +3,16 @@ from .models import Notification, Activity
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from decimal import Decimal
 import json
 
 User = get_user_model()
 channel_layer = get_channel_layer()
 
+# cache key list name (stores list of registered cache keys per business)
+_DASHBOARD_CACHE_LIST_KEY = "dashboard_cache_keys_for_business:{}"
+_DASHBOARD_CACHE_TTL = 3600  # keep record of keys for 1 hour
 
 def _serialize_for_json(data):
     """Recursively convert Decimals and other non-serializable types."""
@@ -20,6 +24,46 @@ def _serialize_for_json(data):
         return [_serialize_for_json(v) for v in data]
     else:
         return data
+
+
+def register_dashboard_cache_key(business, cache_key):
+    """
+    Keep a list of dashboard cache keys for this business so we can invalidate them on changes.
+    business: Business instance or id
+    cache_key: key string
+    """
+    business_id = business.id if hasattr(business, "id") else business
+    list_key = _DASHBOARD_CACHE_LIST_KEY.format(business_id)
+    existing = cache.get(list_key) or []
+    if cache_key not in existing:
+        existing.append(cache_key)
+    cache.set(list_key, existing, _DASHBOARD_CACHE_TTL)
+
+
+def invalidate_dashboard_cache(business):
+    """
+    Delete all registered dashboard cache keys for this business and notify via channels.
+    """
+    business_id = business.id if hasattr(business, "id") else business
+    list_key = _DASHBOARD_CACHE_LIST_KEY.format(business_id)
+    keys = cache.get(list_key) or []
+    for k in keys:
+        try:
+            cache.delete(k)
+        except Exception:
+            pass
+    # clear list
+    cache.delete(list_key)
+
+    # notify websocket clients subscribed to business notifications to refresh dashboard
+    try:
+        async_to_sync(channel_layer.group_send)(
+            f"business_{business_id}_notifications",
+            {"type": "dashboard.update", "payload": {"action": "invalidate"}}
+        )
+    except Exception:
+        # non-fatal: logging optional
+        pass
 
 
 def send_business_notification(business, verb, notification_type="announcement", data=None, recipient=None):

@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { Container, Form, Button, Alert, Spinner, Card, InputGroup } from "react-bootstrap";
+import {toast} from 'react-toastify';
 import { AuthContext } from "../contexts/AuthContext";
 import "./loginstyles.css";
 
@@ -15,21 +16,25 @@ const LoginPage = () => {
         setLoading(true);
         const success = await login(email, password);
         if (!success) {
-            setError("Invalid email or password");
+            setError("  Invalid email or password");
+            setLoading(false);
+            toast.error("Login failed. Please check your credentials.");
         } else {
+            toast.success("Login successful!");
             window.location.href = "/dashboard"; // redirect after login
+            
         }
     };
 
     return (
         <div className="login-wrapper d-flex align-items-center justify-content-center">
-            <Container style={{ maxWidth: "400px" }}>
+            <Container style={{ maxWidth: "440px" }}>
                 <Card className="p-4 shadow-lg border-0 login-card">
-                    <h3 className="text-center mb-4 text-white fw-semibold">
-                        <i className="fas fa-user-circle me-2"></i>Login
-                    </h3>
+                    <h4 className="text-center mb-4 text-white fw-semibold">
+                        <i className="fas fa-user-circle me-2"></i>Login To Access Portal
+                    </h4>
 
-                    {error && <Alert variant="danger">{error}</Alert>}
+                    {error && <Alert variant="danger"><i className="fas fa-exclamation-triangle"></i>{error}</Alert>}
 
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="formEmail" className="mb-3">
@@ -80,7 +85,7 @@ const LoginPage = () => {
                                         aria-hidden="true"
                                         className="me-2"
                                     />
-                                    Logging in...
+                                    Please wait Logging in...
                                 </>
                             ) : (
                                 <>

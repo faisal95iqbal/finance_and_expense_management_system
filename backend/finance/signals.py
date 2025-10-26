@@ -3,7 +3,7 @@
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from core.activity_logger import log_activity
-from notifications.utils import send_business_notification
+from notifications.utils import send_business_notification, invalidate_dashboard_cache
 from .models import Expense, Income
 
 
@@ -74,6 +74,11 @@ def log_expense_update(sender, instance, created, **kwargs):
                 notification_type="finance_updated",
                 data={"expense_id": instance.pk},
             )
+    # Invalidate dashboard cache and notify clients
+    try:
+        invalidate_dashboard_cache(business)
+    except Exception:
+        pass
 
 
 @receiver(post_delete, sender=Expense)
@@ -100,6 +105,11 @@ def log_expense_delete(sender, instance, **kwargs):
         notification_type="activity",
         data={"expense_id": instance.pk},
     )
+    # Invalidate dashboard cache and notify clients
+    try:
+        invalidate_dashboard_cache(business)
+    except Exception:
+        pass
 
 
 # ------------------------------
@@ -167,6 +177,11 @@ def log_income_update(sender, instance, created, **kwargs):
                 notification_type="finance_updated",
                 data={"income_id": instance.pk},
             )
+    # Invalidate dashboard cache and notify clients
+    try:
+        invalidate_dashboard_cache(business)
+    except Exception:
+        pass
 
 
 @receiver(post_delete, sender=Income)
@@ -193,3 +208,8 @@ def log_income_delete(sender, instance, **kwargs):
         notification_type="activity",
         data={"income_id": instance.pk},
     )
+    # Invalidate dashboard cache and notify clients
+    try:
+        invalidate_dashboard_cache(business)
+    except Exception:
+        pass

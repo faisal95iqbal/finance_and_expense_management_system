@@ -8,7 +8,6 @@ import "./header.css";
 
 const loggedInMenuItems = [
   { to: "/", icon: "fas fa-home", label: "Home" },
-  { to: "/dashboard", icon: "fas fa-tachometer-alt", label: "Dashboard" },
   { label: "Logout", icon: "fa-solid fa-arrow-right-from-bracket", action: "logout" },
 ];
 const generalMenuItems = [
@@ -41,7 +40,7 @@ const Header = () => {
           height: offsetHeight + "px",
           width: offsetWidth + "px",
         });
-      }else{
+      } else {
         setSelectorStyle({ display: "none" });
       }
     };
@@ -74,18 +73,21 @@ const Header = () => {
               <div className="left"></div>
               <div className="right"></div>
             </div>
-            <NotificationsBell />
+
             {menuItems.map((item) => (
               item.action === "logout" ? (
-                <Nav.Link
-                  key={item.label}
-                  as="span"
-                  className="nav-link"
-                  style={{ cursor: "pointer" }}
-                  onClick={logout}
-                >
-                  <i className={item.icon}></i> {item.label}
-                </Nav.Link>
+                <>
+                  <Nav.Link
+                    key={item.label}
+                    as="span"
+                    className="nav-link"
+                    style={{ cursor: "pointer" }}
+                    onClick={logout}
+                  >
+                    <i className={item.icon}></i> {item.label}
+                  </Nav.Link>
+                  <NotificationsBell key={"bell"}/>
+                </>
               ) : (
                 <Nav.Link
                   as={NavLink}

@@ -1,0 +1,75 @@
+/* Subtle page gradient (very light) */
+body {
+    background: linear-gradient(180deg, #fbfdff 0%, #f5f7fb 100%);
+    /* If your app has a different global style, you can scope these styles to the page container instead */
+}
+
+/* Header card */
+.page-header {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.page-header:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(27, 46, 78, 0.06);
+}
+
+/* Cards */
+.card {
+    border-radius: 12px;
+}
+
+/* Table nicer hover */
+.table-hover tbody tr:hover {
+    background-color: #f8fbff;
+    transition: background-color 0.12s ease;
+}
+
+/* Truncate helper */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Page spinner vertical size */
+.vh-80 {
+    height: 80vh;
+}
+
+/* Invite/edit modal subtle shadow */
+.modal-content {
+    border-radius: 10px;
+}
+
+/* Action buttons spacing */
+.table .btn {
+    min-width: 110px;
+}
+/* Search bar subtle focus glow */
+.input-group .form-control:focus {
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+    border-color: #86b7fe;
+}
+
+/* Search icon color */
+.input-group-text {
+    background-color: #fff;
+    border-right: 0;
+    color: #6c757d;
+}
+
+.input-group .form-control {
+    border-left: 0;
+}
+
+/* Small responsive tweaks */
+@media (max-width: 575px) {
+    .page-header {
+        text-align: left;
+    }
+
+    .table .btn {
+        min-width: unset;
+    }
+}

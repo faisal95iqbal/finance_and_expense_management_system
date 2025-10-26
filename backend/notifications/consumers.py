@@ -80,6 +80,12 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 
     async def notification_new(self, event):
         await self.send_json({"type": "notification", "notification": event.get("notification")})
+    async def dashboard_update(self, event):
+        """
+        Received when backend calls invalidate_dashboard_cache -> sends {'type': 'dashboard.update', 'payload': {...}}
+        Method name maps to 'dashboard_update' (dot replaced by underscore).
+        """
+        await self.send_json({"type": "dashboard_update", "payload": event.get("payload", {})})
 
 
 class ActivityConsumer(AsyncJsonWebsocketConsumer):
