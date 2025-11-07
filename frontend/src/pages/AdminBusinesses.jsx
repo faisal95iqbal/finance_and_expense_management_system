@@ -173,6 +173,7 @@ import {
   Alert,
 } from "react-bootstrap";
 import API from "../api/api";
+import {toast} from "react-toastify";
 
 export default function AdminBusinesses() {
   const [businesses, setBusinesses] = useState([]);
@@ -200,13 +201,6 @@ export default function AdminBusinesses() {
     message: "",
   });
 
-  // Toast alert
-  const [alert, setAlert] = useState({ show: false, message: "", variant: "" });
-
-  const showAlert = (message, variant = "success") => {
-    setAlert({ show: true, message, variant });
-    setTimeout(() => setAlert({ show: false, message: "", variant: "" }), 2500);
-  };
 
   const fetchBusinesses = async () => {
     try {
@@ -214,8 +208,8 @@ export default function AdminBusinesses() {
       const res = await API.get("/businesses/");
       setBusinesses(res.data);
     } catch (err) {
-      console.error(err);
-      showAlert("Failed to fetch businesses", "danger");
+      toast.error("Failed to fetch businesses");
+      
     } finally {
       setLoading(false);
     }
@@ -240,10 +234,9 @@ export default function AdminBusinesses() {
         owner_password: "",
       });
       fetchBusinesses();
-      showAlert("Business created successfully!");
+      toast.success("Business created successfully");
     } catch (err) {
-      console.error(err);
-      showAlert("Failed to create business", "danger");
+      toast.error("Failed to create business. Try again.");
     } finally {
       setSubmitting(false);
     }
@@ -266,15 +259,15 @@ export default function AdminBusinesses() {
     try {
       if (action === "deactivate") {
         await API.delete(`/businesses/${businessId}/`);
-        showAlert("Business deactivated");
+        toast.info("Business deactivated");
       } else {
         await API.post(`/businesses/${businessId}/reactivate/`);
-        showAlert("Business reactivated");
+        toast.info("Business reactivated");
       }
       fetchBusinesses();
     } catch (err) {
       console.error(err);
-      showAlert("Action failed", "danger");
+      toast.error("Action failed. Please try again.");
     } finally {
       setConfirmModal({ show: false, action: null, businessId: null, message: "" });
     }

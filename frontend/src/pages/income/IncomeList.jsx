@@ -88,6 +88,7 @@ import {
     Card,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import {toast} from "react-toastify";
 
 export default function IncomeList() {
     const [incomes, setIncomes] = useState([]);
@@ -106,7 +107,7 @@ export default function IncomeList() {
             const res = await API.get("/finance/incomes/", { params: filters });
             setIncomes(res.data);
         } catch (err) {
-            console.error(err);
+            toast.error("Failed to fetch incomes list.");
         } finally {
             setLoading(false);
         }
@@ -117,7 +118,7 @@ export default function IncomeList() {
             const res = await API.get("/finance/categories/", { params: { type: "income" } });
             setCategories(res.data);
         } catch (err) {
-            console.error(err);
+            
         }
     };
 
@@ -130,10 +131,10 @@ export default function IncomeList() {
         if (!window.confirm("Delete this income?")) return;
         try {
             await API.delete(`/finance/incomes/${id}/`);
+            toast.success("Income deleted successfully.");
             fetch();
         } catch (err) {
-            console.error(err);
-            alert("Delete failed");
+            toast.error("Delete failed.try again.");
         }
     };
 

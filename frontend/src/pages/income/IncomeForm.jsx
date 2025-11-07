@@ -100,6 +100,7 @@ import API from "../../api/api";
 import { Container, Row, Col, Form, Button, Card, Spinner, Image } from "react-bootstrap";
 import AddCategoryModal from "../../components/AddCategoryModal";
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify";
 
 export default function IncomeForm() {
     const [amount, setAmount] = useState("");
@@ -163,10 +164,11 @@ export default function IncomeForm() {
             await API.post("/finance/incomes/", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
+            toast.success("Income created successfully");
             nav("/incomes");
+
         } catch (err) {
-            console.error(err);
-            alert("Failed to create income");
+            toast.error("Failed to create income");
         } finally {
             setSubmitting(false);
         }

@@ -263,18 +263,8 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/api";
 import { AuthContext } from "../contexts/AuthContext";
 import './BusinessSettings.css';
+import {toast} from "react-toastify";
 
-function ToastMessage({ show, onClose, title, message, variant = "primary" }) {
-    // variant currently unused but kept for future color mapping
-    return (
-        <Toast onClose={onClose} show={show} delay={4000} autohide>
-            <Toast.Header>
-                <strong className="me-auto">{title}</strong>
-            </Toast.Header>
-            <Toast.Body>{message}</Toast.Body>
-        </Toast>
-    );
-}
 
 function InviteModal({ show, onHide, onInvite }) {
     const [data, setData] = useState({ email: "", role: "staff", phone: "" });
@@ -289,8 +279,10 @@ function InviteModal({ show, onHide, onInvite }) {
         setSubmitting(true);
         try {
             await onInvite(data);
+            toast.success("Invitation sent.");
             onHide();
         } catch (err) {
+            toast.error("Failed to send invite. Please check the email and try again.");
             // bubble error up (caller will show toast)
         } finally {
             setSubmitting(false);
@@ -349,7 +341,7 @@ function InviteModal({ show, onHide, onInvite }) {
                         {submitting ? (
                             <>
                                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />{" "}
-                                Inviting...
+                                Sending Invite...
                             </>
                         ) : (
                             "Invite"
@@ -422,7 +414,7 @@ function EditBusinessModal({ show, onHide, data, onChange, onSave, saving }) {
                         {saving ? (
                             <>
                                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />{" "}
-                                Saving...
+                                Updating Details...
                             </>
                         ) : (
                             "Save"
@@ -463,15 +455,11 @@ export default function BusinessSettings() {
         );
     }, [users, searchTerm]);
 
-    // Toasts
-    const [toast, setToast] = useState({ show: false, title: "", message: "" });
 
     // API error / action pending states
     const [invitePending, setInvitePending] = useState(false);
     const [actionPending, setActionPending] = useState({}); // keyed by userId for per-row actions
 
-    const showToast = (title, message) => setToast({ show: true, title, message });
-    const hideToast = () => setToast({ ...toast, show: false });
 
     const fetchBusinessAndUsers = useCallback(async () => {
         if (!user || !user.business_id) return;
@@ -490,8 +478,7 @@ export default function BusinessSettings() {
                 timezone: bRes.data.timezone || "UTC"
             });
         } catch (err) {
-            console.error("fetchBusinessAndUsers:", err);
-            showToast("Error", "Failed to load business data. Please try again.");
+            toast.error("Failed to load business data.");
         } finally {
             setLoading(false);
         }
@@ -507,11 +494,10 @@ export default function BusinessSettings() {
         setInvitePending(true);
         try {
             await API.post(`/businesses/${user.business_id}/users/`, { email, role, phone });
-            showToast("Success", "Invitation sent.");
+            toast.success("Invitation sent successfully.");
             await fetchBusinessAndUsers();
         } catch (err) {
-            console.error("handleInvite:", err);
-            showToast("Error", "Failed to send invite. Please check the email and try again.");
+            toast.error("Failed to send invite. Please check the email and try again.");
             throw err;
         } finally {
             setInvitePending(false);
@@ -523,11 +509,10 @@ export default function BusinessSettings() {
         setActionPending((p) => ({ ...p, [userId]: true }));
         try {
             await API.patch(`/businesses/${user.business_id}/users/${userId}/`, { is_active: false });
-            showToast("Success", "User marked inactive.");
+            toast.success("User marked inactive.");
             await fetchBusinessAndUsers();
         } catch (err) {
-            console.error("handleMarkInactive:", err);
-            showToast("Error", "Failed to mark user inactive.");
+            toast.error("Failed to mark user inactive.");
         } finally {
             setActionPending((p) => ({ ...p, [userId]: false }));
         }
@@ -537,10 +522,9 @@ export default function BusinessSettings() {
         setActionPending((p) => ({ ...p, [userId]: true }));
         try {
             await API.post(`/businesses/${user.business_id}/users/${userId}/resend_invite/`);
-            showToast("Success", "Invitation resent.");
+            toast.success("Invitation resent successfully.");
         } catch (err) {
-            console.error("handleResend:", err);
-            showToast("Error", "Failed to resend invite.");
+            toast.error("Failed to resend invite.");
         } finally {
             setActionPending((p) => ({ ...p, [userId]: false }));
         }
@@ -552,11 +536,10 @@ export default function BusinessSettings() {
         try {
             await API.patch(`/businesses/${user.business_id}/`, editData);
             setShowEdit(false);
-            showToast("Success", "Business updated.");
+            toast.success("Business details updated successfully.");
             await fetchBusinessAndUsers();
         } catch (err) {
-            console.error("handleEditBusiness:", err);
-            showToast("Error", "Failed to update business.");
+            toast.error("Failed to update business details.");
         } finally {
             setSaving(false);
         }
@@ -761,16 +744,6 @@ export default function BusinessSettings() {
                 onSave={handleEditBusiness}
                 saving={saving}
             />
-
-            {/* Toasts */}
-            <ToastContainer position="top-end" className="p-3">
-                <Toast onClose={hideToast} show={toast.show} delay={4000} autohide>
-                    <Toast.Header>
-                        <strong className="me-auto">{toast.title}</strong>
-                    </Toast.Header>
-                    <Toast.Body>{toast.message}</Toast.Body>
-                </Toast>
-            </ToastContainer>
         </Container>
     );
 }

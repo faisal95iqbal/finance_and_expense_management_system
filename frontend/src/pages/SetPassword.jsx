@@ -67,6 +67,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Form, Button, Container, Card, Alert, InputGroup } from "react-bootstrap";
 import API from "../api/api";
 import { AuthContext } from "../contexts/AuthContext";
+import {toast} from "react-toastify";
 
 export default function SetPassword() {
     const { uid, token } = useParams();
@@ -116,9 +117,10 @@ export default function SetPassword() {
                 new_password: password,
             });
             login({ access: res.data.access, refresh: res.data.refresh });
+            toast.success("Password set successfully! Welcome aboard.");
             navigate("/dashboard");
         } catch (err) {
-            console.error(err);
+            toast.error("Failed to set password. Please try again.");
             setError(
                 err?.response?.data?.detail || "Failed to set password. The link may have expired."
             );

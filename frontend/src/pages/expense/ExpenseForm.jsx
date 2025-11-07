@@ -97,6 +97,7 @@ import API from "../../api/api";
 import { Container, Row, Col, Form, Button, Card, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import AddCategoryModal from "../../components/AddCategoryModal";
+import {toast} from "react-toastify";
 
 export default function ExpenseForm() {
     const [amount, setAmount] = useState("");
@@ -118,7 +119,7 @@ export default function ExpenseForm() {
                 });
                 setCategories(res.data);
             } catch (err) {
-                console.error(err);
+
             }
         };
         load();
@@ -142,9 +143,9 @@ export default function ExpenseForm() {
             });
             setSuccess(true);
             setTimeout(() => nav("/expenses"), 800);
+            toast.success("Expense created successfully!");
         } catch (err) {
-            console.error(err);
-            alert("Failed to create expense");
+            toast.error("Failed to create expense.");
         } finally {
             setSaving(false);
         }

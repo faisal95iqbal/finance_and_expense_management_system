@@ -144,6 +144,7 @@ import {
     Spinner,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import {toast} from "react-toastify";
 
 export default function ExpenseList() {
     const [expenses, setExpenses] = useState([]);
@@ -164,7 +165,6 @@ export default function ExpenseList() {
             });
             setCategories(res.data);
         } catch (err) {
-            console.error("Failed to load categories:", err);
         }
     };
 
@@ -181,7 +181,7 @@ export default function ExpenseList() {
             const res = await API.get("/finance/expenses/", { params });
             setExpenses(res.data);
         } catch (err) {
-            console.error("Failed to fetch expenses:", err);
+            toast.error("Failed to fetch expenses.Try again later.");
         } finally {
             setLoading(false);
         }
@@ -213,9 +213,9 @@ export default function ExpenseList() {
         try {
             await API.delete(`/finance/expenses/${id}/`);
             fetchExpenses();
+            toast.success("Expense deleted successfully");
         } catch (err) {
-            console.error(err);
-            alert("Failed to delete");
+           toast.error("Failed to delete expense. Try again later.");
         }
     };
 

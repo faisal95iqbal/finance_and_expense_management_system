@@ -36,7 +36,6 @@ export const AuthProvider = ({ children }) => {
             saveAuthData(res.data, email);
             return true;
         } catch (err) {
-            console.error("Login failed", err);
             return false;
         }
     };
@@ -64,7 +63,6 @@ export const AuthProvider = ({ children }) => {
 
             return true;
         } catch (err) {
-            console.error("Set password failed", err);
             return false;
         }
     };

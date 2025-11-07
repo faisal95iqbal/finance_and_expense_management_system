@@ -21,7 +21,7 @@ const LoginPage = () => {
             toast.error("Login failed. Please check your credentials.");
         } else {
             toast.success("Login successful!");
-            window.location.href = "/dashboard"; // redirect after login
+            window.location.href = "/"; // redirect after login
             
         }
     };
